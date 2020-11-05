@@ -21,8 +21,10 @@ import com.hsbook.model.BookModel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener,
+@SuppressWarnings("FieldCanBeLocal")
+public class MainActivity extends BaseActivity implements HomeFragment.OnFragmentInteractionListener,
         HistoryFragment.OnFragmentInteractionListener, AboutFragment.OnFragmentInteractionListener {
 
     private TextView mActionBarTitle;
@@ -45,11 +47,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     mActionBarTitle.setText(R.string.download_history);
                     fragment = new HistoryFragment();
                     break;
-
                 case R.id.navigation_about:
                     mActionBarTitle.setText(R.string.title_about);
                     fragment = new AboutFragment();
-
                 default:
                     break;
             }
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     private void setUpActionBar(Toolbar toolbar){
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
         }
     }
 
@@ -132,12 +132,11 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
             File[] files = directory.listFiles();
             if(files != null) {
                 Log.d("Files", "Size: " + files.length);
-                for (int i = 0; i < files.length; i++) {
-                    histories.add(files[i].getName());
-                    Log.d("Files", "FileName:" + files[i].getName());
+                for (File file : files) {
+                    histories.add(file.getName());
+                    Log.d("Files", "FileName:" + file.getName());
                 }
             }
         }
     }
-
 }

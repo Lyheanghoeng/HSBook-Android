@@ -75,37 +75,8 @@ public class DetailActivity extends AppCompatActivity {
                         if (url.equals("")) {
                             Toast.makeText(getApplication(), "Something went wrong", Toast.LENGTH_SHORT).show();
                         } else {
-//                            new DownloadTask(DetailActivity.this, "https://moh-dhs.com/docs/140_doc.pdf", bookTitle);
                             new DownloadTask(DetailActivity.this, url, bookTitle);
                         }
-
-//                        HomeProfileService api = ServiceManager.createService(HomeProfileService.class);
-//                        Call<ResponseBody> responseCall = api.downlload(url);
-//                        ServiceManager.enqueueDownload(responseCall, new ServiceMangerCallback<Response<ResponseBody>>() {
-//                            @Override
-//                            public void onSuccess(Response<ResponseBody> data) {
-//
-//                                try {
-//                                    File path = Environment.getExternalStorageDirectory();
-//                                    File file = new File(path, bookTitle);
-//                                    FileOutputStream fileOutputStream = new FileOutputStream(file);
-//
-//                                    assert data.body() != null;
-//                                    IOUtils.write(data.body().bytes(), fileOutputStream);
-//                                }
-//                                catch (Exception ex){
-//                                    Log.d("Exception =", "" + ex.getMessage());
-//                                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT)
-//                                }
-//
-//                            }
-//
-//                            @Override
-//                            public void onError(String message) {
-//
-//                            }
-//                        });
-
                     } else {
                         ActivityCompat.requestPermissions(DetailActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                     }
@@ -132,17 +103,8 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void setUpDetailInfo(BookModel book) {
-//        String coverUrl = new ApiUrl().getCoverApi();
-//                if (book.getCover() != null){
-//            Glide.with(getApplicationContext())
-//                    .load(coverUrl + book.getCover())
-//                    .into(imgBook);
-//        }
         String pdfFileUrl = new ApiUrl().getSoftFile();
         url = pdfFileUrl + book.getSoftFile();
-
-        Log.d("pdfFileUrl =", "" + url);
-
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("https://docs.google.com/viewer?url=" + url);
         webView.setWebViewClient(new WebViewClient() {
@@ -157,11 +119,11 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        textList.add(new TextDetailModel("Type of document", book.getBookType()));
-        Log.d("book.", "" + book.getTypeEn());
-        Log.d("book.", "" + book.getTypeKh());
-        textList.add(new TextDetailModel("Search keyword EN", book.getTypeEn()));
-        textList.add(new TextDetailModel("Search keyword KH", book.getTypeKh()));
+//        textList.add(new TextDetailModel("Type of document", book.getBookType()));
+//        textList.add(new TextDetailModel("Search keyword EN", book.getTypeEn()));
+//        textList.add(new TextDetailModel("Search keyword KH", book.getTypeKh()));
+
+        textList.add(new TextDetailModel("Type of document", book.getTypeEn()));
 
         textListAdapter = new TextDetailListAdapter(textList);
         textListAdapter.notifyDataSetChanged();

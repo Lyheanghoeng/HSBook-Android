@@ -3,9 +3,13 @@ package com.hsbook;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -14,17 +18,14 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        final Handler handler = new Handler();
-        final Runnable r = new Runnable() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
             public void run() {
-                //handler.postDelayed(this, 1000);
+                // Your Code
                 Intent mainAct = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(mainAct);
                 finish();
             }
-        };
-        handler.postDelayed(r, 3000);
-
+        }, 1000);
     }
-
 }

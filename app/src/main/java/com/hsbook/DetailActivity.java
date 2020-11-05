@@ -12,6 +12,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,8 @@ public class DetailActivity extends AppCompatActivity {
     private BookModel book;
     private Toolbar actionBar;
     private Button downloadBtn;
+    private ProgressBar progressBar;
+
     private String url = "";
 
     @Override
@@ -54,16 +57,18 @@ public class DetailActivity extends AppCompatActivity {
         actionBar = findViewById(R.id.act_detail_app_bar);
         webView = findViewById(R.id.act_detail_webview);
         downloadBtn = findViewById(R.id.act_detail_download_btn);
+        progressBar = findViewById(R.id.act_detail_progress);
         setUpActionBar(actionBar);
 
         linearLayoutManager = new LinearLayoutManager(this);
         textListView.setLayoutManager(linearLayoutManager);
         textListView.setHasFixedSize(true);
         book = (BookModel) getIntent().getSerializableExtra("BOOK");
+
+        // Download Action
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         //File write logic here
@@ -77,8 +82,6 @@ public class DetailActivity extends AppCompatActivity {
                         ActivityCompat.requestPermissions(DetailActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                     }
                 }
-
-
             }
         });
     }
@@ -100,19 +103,22 @@ public class DetailActivity extends AppCompatActivity {
         String pdfFileUrl = new ApiUrl().getSoftFile();
         url = pdfFileUrl + book.getSoftFile();
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("https://docs.google.com/viewer?url=" + url);
+        webView.clearCache(true);
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                Log.d("webView", "" + url);
+                progressBar.setVisibility(View.VISIBLE);
             }
 
             public void onPageFinished(WebView view, String url) {
-                Log.d("webView", "finish");
+                if (view.getContentHeight() == 0) view.loadUrl(url);
+                progressBar.setVisibility(View.INVISIBLE);
             }
         });
 
+        Log.d("onPageFinished", "" + url);
+        webView.loadUrl("https://docs.google.com/viewer?url=" + url);
 //        textList.add(new TextDetailModel("Type of document", book.getBookType()));
 //        textList.add(new TextDetailModel("Search keyword EN", book.getTypeEn()));
 //        textList.add(new TextDetailModel("Search keyword KH", book.getTypeKh()));

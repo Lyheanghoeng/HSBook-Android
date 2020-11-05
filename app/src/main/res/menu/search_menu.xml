@@ -5,7 +5,9 @@
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_24dp"
-        android:title="@string/search"
+        android:title="DNS"
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
+
 </menu>

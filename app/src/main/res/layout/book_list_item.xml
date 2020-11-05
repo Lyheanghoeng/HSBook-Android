@@ -13,10 +13,10 @@
 
         <ImageView
             android:id="@+id/book_img"
-            android:layout_width="100dp"
+            android:layout_width="92dp"
             android:layout_height="100dp"
             android:src="@drawable/img_placeholder"
-            android:scaleType="centerCrop"/>
+            android:scaleType="fitXY"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"

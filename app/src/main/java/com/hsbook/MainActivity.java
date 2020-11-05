@@ -39,7 +39,7 @@ public class MainActivity extends BaseActivity implements HomeFragment.OnFragmen
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mActionBarTitle.setText(R.string.title_home);
+                    mActionBarTitle.setText("DNS");
                     fragment = new HomeFragment();
                     break;
                 case R.id.navigation_history:
@@ -117,6 +117,7 @@ public class MainActivity extends BaseActivity implements HomeFragment.OnFragmen
     private void setUpActionBar(Toolbar toolbar){
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            mActionBarTitle.setText("DHS");
             Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
         }
     }

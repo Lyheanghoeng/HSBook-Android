@@ -2,11 +2,13 @@ package com.hsbook;
 
 import android.net.Uri;
 import android.os.Environment;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
@@ -34,7 +36,7 @@ public class HistoryDetailActivity extends AppCompatActivity {
         path = bundle.getString("path");
 
         File pdfFile = new File(Environment.getExternalStorageDirectory() + "/" + "HSBook Download", path);
-        if (pdfFile.exists())  {
+        if (pdfFile.exists()) {
             //Checking for the file is exist or not
             Log.d("pdfFile = ", "" + pdfFile.getName());
             Uri path = Uri.fromFile(pdfFile);
@@ -48,7 +50,25 @@ public class HistoryDetailActivity extends AppCompatActivity {
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
             mActionBarTitle.setText(R.string.download_history);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_arrow_24dp);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            //Title bar back press triggers onBackPressed()
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //Both navigation bar back press and title bar back press will trigger this method
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

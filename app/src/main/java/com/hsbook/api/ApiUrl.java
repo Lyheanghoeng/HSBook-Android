@@ -2,7 +2,7 @@ package com.hsbook.api;
 
 public class ApiUrl {
 
-    private String BASE_API = "http://moh-dhs.com/";
+    private String BASE_API = "https://moh-dhs.com/";
 
 //    private String BASE_API = "http://hsbooks.bayonlands.com/";
 

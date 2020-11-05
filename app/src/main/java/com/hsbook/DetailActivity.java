@@ -5,13 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -21,30 +15,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.github.barteksc.pdfviewer.PDFView;
-//import com.hsbook.Utils.DownloadTask;
-import com.hsbook.Retrofit.Interface.HomeProfileService;
-import com.hsbook.Retrofit.ServiceManager;
-import com.hsbook.Retrofit.ServiceMangerCallback;
 import com.hsbook.Utils.DownloadTask;
 import com.hsbook.adpater.TextDetailListAdapter;
 import com.hsbook.api.ApiUrl;
 import com.hsbook.model.BookModel;
-import com.hsbook.model.BookResponse;
 import com.hsbook.model.TextDetailModel;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+//import com.hsbook.Utils.DownloadTask;
 
-public class DetailActivity extends AppCompatActivity{
+public class DetailActivity extends AppCompatActivity {
     private String PDF_VIEWER = "PDF_VIEWER";
 
     private ImageView imgBook;
@@ -56,14 +46,13 @@ public class DetailActivity extends AppCompatActivity{
     private BookModel book;
     private Toolbar actionBar;
     private Button downloadBtn;
-    PDFView pdfView;
     String url = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-//        imgBook = findViewById(R.id.act_detail_img_book);
         textListView = findViewById(R.id.act_detail_list);
         actionBar = findViewById(R.id.act_detail_app_bar);
         webView = findViewById(R.id.act_detail_webview);
@@ -83,7 +72,12 @@ public class DetailActivity extends AppCompatActivity{
                         //File write logic here
                         final String bookTitle = MessageFormat.format("{0}-{1}", book.getTypeKh(), book.getTypeEn()) + ".pdf";
                         Log.d("DownloadTask =", "" + url);
-                        new DownloadTask(DetailActivity.this, url, bookTitle);
+                        if (url.equals("")) {
+                            Toast.makeText(getApplication(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                        } else {
+//                            new DownloadTask(DetailActivity.this, "https://moh-dhs.com/docs/140_doc.pdf", bookTitle);
+                            new DownloadTask(DetailActivity.this, url, bookTitle);
+                        }
 
 //                        HomeProfileService api = ServiceManager.createService(HomeProfileService.class);
 //                        Call<ResponseBody> responseCall = api.downlload(url);
@@ -146,6 +140,9 @@ public class DetailActivity extends AppCompatActivity{
 //        }
         String pdfFileUrl = new ApiUrl().getSoftFile();
         url = pdfFileUrl + book.getSoftFile();
+
+        Log.d("pdfFileUrl =", "" + url);
+
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("https://docs.google.com/viewer?url=" + url);
         webView.setWebViewClient(new WebViewClient() {
@@ -156,7 +153,7 @@ public class DetailActivity extends AppCompatActivity{
             }
 
             public void onPageFinished(WebView view, String url) {
-                Log.d("webView", "finish" );
+                Log.d("webView", "finish");
             }
         });
 
@@ -182,17 +179,4 @@ public class DetailActivity extends AppCompatActivity{
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_arrow_24dp);
         }
     }
-
-//    @SuppressLint("SetJavaScriptEnabled")
-//    public void getPdfViewer(){
-//        String gPdfVewUrl = "http://docs.google.com/gview?embedded=true&url=";
-//        String pdfFileUrl = new ApiUrl().getSoftFile();
-//
-//        if (book.getSoftFile() != null) {
-//            WebView pdfViewer = new WebView(this);
-//            pdfViewer.getSettings().setJavaScriptEnabled(true);
-//            pdfViewer.loadUrl(gPdfVewUrl + pdfFileUrl + book.getSoftFile());
-//            Log.d(PDF_VIEWER, pdfFileUrl+book.getSoftFile());
-//        }
-//    }
 }

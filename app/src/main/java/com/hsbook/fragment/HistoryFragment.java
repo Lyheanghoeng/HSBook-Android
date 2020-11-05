@@ -97,12 +97,12 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
                             @Override
                             public void onClick(int pos) {
                                 // TODO: onDelete
-                                Log.d("onClick::", "onClick" + MainActivity.histories.get(pos));
                                 File pdfFile = new File(Environment.getExternalStorageDirectory() + "/" + "HSBook Download", MainActivity.histories.get(pos));
                                 if (pdfFile.exists()) //Checking for the file is exist or not
                                 {
                                     pdfFile.delete();
                                     MainActivity.histories.remove(pos);
+                                    assert getFragmentManager() != null;
                                     getFragmentManager()
                                             .beginTransaction()
                                             .detach(HistoryFragment.this)
@@ -122,21 +122,13 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-//                mSwipeRefreshLayout.setRefreshing(true);
-                getHistoryList();
+
             }
         });
     }
 
-    //nRename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -170,11 +162,16 @@ public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRe
             File directory = new File(path);
             File[] files = directory.listFiles();
             if(files != null) {
-                Log.d("Files", "Size: " + files.length);
                 for (File file : files) {
                     MainActivity.histories.add(file.getName());
-                    Log.d("Files", "FileName:" + file.getName());
                 }
+
+                assert getFragmentManager() != null;
+                getFragmentManager()
+                        .beginTransaction()
+                        .detach(HistoryFragment.this)
+                        .attach(HistoryFragment.this)
+                        .commit();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }

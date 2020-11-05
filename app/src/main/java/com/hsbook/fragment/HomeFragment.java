@@ -28,32 +28,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NoConnectionError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.hsbook.MainActivity;
 import com.hsbook.R;
 import com.hsbook.Retrofit.Interface.HomeProfileService;
 import com.hsbook.Retrofit.ServiceManager;
 import com.hsbook.Retrofit.ServiceMangerCallback;
 import com.hsbook.adpater.BookListAdapter;
-import com.hsbook.api.ApiUrl;
 import com.hsbook.model.BookModel;
 import com.hsbook.model.BookResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import retrofit2.Call;

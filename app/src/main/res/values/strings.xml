@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name" translatable="false">GIZ</string>
+    <string name="title_home" translatable="false">Home</string>
+    <string name="title_history">History</string>
+    <string name="title_about">About Us</string>
+    <string name="download_history">Download History</string>
+    <string name="search">Search</string>
+    <string name="detail">Detail</string>
+    <string name="download">Download</string>
+    <string name="search_hint">Search…</string>
+
+    <string name="book_title">Hand Washing 2018</string>
+    <string name="book_lang">Khmer</string>
+    <string name="book_author">Hulk Kai</string>
+    <string name="text_title">Type of document</string>
+    <string name="text_describe">Clinical Guideline</string>
+    <string name="title_activity_splash">នាយកដ្ឋានមន្ទីពេទ្យ</string>
+    <string name="no_result_found">No result found!</string>
+
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/book_list_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp">
+
+    <RelativeLayout
+        android:id="@+id/view_foreground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:layout_margin="8dp">
+
+        <!--<ImageView-->
+            <!--android:id="@+id/act_history_book_image"-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="100dp"-->
+            <!--android:src="@drawable/img_placeholder"-->
+            <!--android:scaleType="centerCrop"/>-->
+
+        <com.github.barteksc.pdfviewer.PDFView
+            android:id="@+id/act_history_book_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
+
+            <TextView
+                android:id="@+id/act_history_book_title_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/book_title"
+                android:layout_toEndOf="@+id/act_history_book_image"
+                android:layout_margin="8dp"
+                android:textSize="14sp"/>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

@@ -7,6 +7,7 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 public interface HomeProfileService {
@@ -19,4 +20,6 @@ public interface HomeProfileService {
     @GET
     Call<ResponseBody> downlload(@Url String fileUrl);
 
+    @GET("app.php")
+    Call<List<BookResponse>> getSearchBook(@Query("app_kw_kh") String param);
 }

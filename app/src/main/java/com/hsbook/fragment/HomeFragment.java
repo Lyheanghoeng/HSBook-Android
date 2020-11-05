@@ -33,7 +33,6 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -58,6 +57,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import retrofit2.Call;
+import retrofit2.Response;
 
 public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -136,7 +136,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     @Override
                     public void run() {
                         //Do something after 100ms
-//                        new BookListRequest().execute();
                         getBookList();
                     }
                 }, 1000);
@@ -150,12 +149,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             @Override
             public void run() {
 
-//                if (isConnected()) {
-//                    MainActivity.bookListMain = new ArrayList<>();
-//                    new BookListRequest().execute();
-//                } else {
-//                    Toast. makeText(getContext(), "No Internet connection", Toast.LENGTH_LONG).show();
-//                }
             }
         });
     }
@@ -263,10 +256,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         switch (item.getItemId()) {
             case R.id.action_search:
                 // not implement event here
-                //Log.d("TT", "Search selected");
                 return false;
             default:
-                //return super.onOptionsItemSelected(item);
                 break;
         }
         searchView.setOnQueryTextListener(queryTextListener);
@@ -277,7 +268,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
         if (isConnected()) {
             MainActivity.bookListMain = new ArrayList<>();
-//            new BookListRequest().execute();
             getBookList();
         } else {
             mSwipeRefreshLayout.setRefreshing(false);
@@ -297,6 +287,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return networkInfo != null && networkInfo.isConnected();
     }
 
+    // query book list
     private void getBookList() {
         HomeProfileService service = ServiceManager.createService(HomeProfileService.class);
         Call<List<BookResponse>> responseCall = service.getBookList();
@@ -353,100 +344,68 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         });
     }
 
+    // Search Book by keyword
     private void getSearchBook(String query) {
 
-        RequestQueue queue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
-        final String searchApi = new ApiUrl().getSearchApi() + query;
-
-        StringRequest strRequest = new StringRequest(Request.Method.GET, searchApi,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Search url: ", "" + searchApi);
-                        Log.d("Search response: ", "" + response);
-
-                        if (!response.equals("null")) {
-                            try {
-                                JSONArray bookArray = new JSONArray(response);
-                                for (int i = 0; i < bookArray.length(); i++) {
-                                    JSONObject bookObj = bookArray.getJSONObject(i);
-
-                                    BookModel tempBook = new BookModel();
-                                    tempBook.setBookId(bookObj.getString("book_id"));
-                                    tempBook.setSearch(bookObj.getString("Search"));
-                                    tempBook.setBookType(bookObj.getString("book_type"));
-                                    tempBook.setBookLanguage(bookObj.getString("book_language"));
-                                    tempBook.setReleaseYear(bookObj.getString("release_year"));
-                                    tempBook.setAuthor(bookObj.getString("author"));
-                                    tempBook.setIsbn(bookObj.getString("isbn"));
-                                    tempBook.setSoftFile(bookObj.getString("soft_file"));
-                                    tempBook.setCover(bookObj.getString("cover"));
-                                    tempBook.setEntryBy(bookObj.getString("entry_by"));
-                                    tempBook.setEntryDate(bookObj.getString("entry_date"));
-                                    tempBook.setShowPub(bookObj.getString("show_pub"));
-                                    tempBook.setLang(bookObj.getString("lang"));
-                                    tempBook.setTypeKh(bookObj.getString("type_kh"));
-                                    tempBook.setTypeEn(bookObj.getString("type_en"));
-
-                                    searchList.add(tempBook);
-                                }
-                                progressBar.setVisibility(View.INVISIBLE);
-                                bookAdapter = new BookListAdapter(searchList, getActivity());
-                                bookRecycleView.setAdapter(bookAdapter);
-                                bookAdapter.notifyDataSetChanged();
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            searchList.clear();
-                            bookAdapter = new BookListAdapter(searchList, getActivity());
-                            bookRecycleView.setAdapter(bookAdapter);
-                            bookAdapter.notifyDataSetChanged();
-                            progressBar.setVisibility(View.INVISIBLE);
-                            txtNotFound.setVisibility(View.VISIBLE);
-
-                        }
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("TAG_RES: ", error.toString());
-                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                            // Is thrown if there's no network connection or server is down
-                            Toast.makeText(getContext(), "Check internet your internet connection and refresh",
-                                    Toast.LENGTH_LONG).show();
-                            // We return to the last fragment
-                            if ((getFragmentManager() != null ? getFragmentManager().getBackStackEntryCount() : 0) != 0) {
-                                getFragmentManager().popBackStack();
-                            }
-
-                        } else {
-                            // Is thrown if there's no network connection or server is down
-                            Toast.makeText(getContext(), "Server problem, check internet connection and restart",
-                                    Toast.LENGTH_LONG).show();
-                            // We return to the last fragment
-                            if (getFragmentManager() != null && getFragmentManager().getBackStackEntryCount() != 0) {
-                                getFragmentManager().popBackStack();
-                            }
-                        }
-                    }
-                }) {
+        HomeProfileService service = ServiceManager.createService(HomeProfileService.class);
+        Call<List<BookResponse>> responseCall = service.getSearchBook(query);
+        ServiceManager.enqueueWithRetry(responseCall, new ServiceMangerCallback<retrofit2.Response<List<BookResponse>>>() {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                return super.getParams();
+            public void onSuccess(Response<List<BookResponse>> data) {
+                if (data.body() != null) {
+                    for (int i = 0; i < data.body().size(); i++) {
+                        BookModel tempBook = new BookModel();
+                        BookResponse bookResponse = data.body().get(i);
+                        tempBook.setBookId(bookResponse.getBookId());
+                        tempBook.setSearch(bookResponse.getSearch());
+                        tempBook.setBookType(bookResponse.getBookType());
+                        tempBook.setBookLanguage(bookResponse.getBookLanguage());
+                        tempBook.setReleaseYear(bookResponse.getReleaseYear());
+                        tempBook.setAuthor(bookResponse.getAuthor());
+                        tempBook.setIsbn(bookResponse.getIsbn());
+                        tempBook.setSoftFile(bookResponse.getSoftFile());
+                        tempBook.setCover(bookResponse.getCover());
+                        tempBook.setEntryBy(bookResponse.getEntryBy());
+                        tempBook.setEntryDate(bookResponse.getEntryDate());
+                        tempBook.setShowPub(bookResponse.getShowPub());
+                        tempBook.setLang(bookResponse.getLang());
+                        tempBook.setTypeKh(bookResponse.getTypeKh());
+                        tempBook.setTypeEn(bookResponse.getTypeEn());
+
+                        searchList.add(tempBook);
+                    }
+
+                    progressBar.setVisibility(View.INVISIBLE);
+                    bookAdapter = new BookListAdapter(searchList, getActivity());
+                    bookRecycleView.setAdapter(bookAdapter);
+                    bookAdapter.notifyDataSetChanged();
+
+                } else {
+                    searchList.clear();
+                    bookAdapter = new BookListAdapter(searchList, getActivity());
+                    bookRecycleView.setAdapter(bookAdapter);
+                    bookAdapter.notifyDataSetChanged();
+                    progressBar.setVisibility(View.INVISIBLE);
+                    txtNotFound.setVisibility(View.VISIBLE);
+
+                }
             }
-        };
-        strRequest.setRetryPolicy(
-                new DefaultRetryPolicy(
-                        30000,
-                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-                )
-        );
-        queue.add(strRequest);
+
+            @Override
+            public void onError(String message) {
+                // Is thrown if there's no network connection or server is down
+                progressBar.setVisibility(View.INVISIBLE);
+                Log.d("Error =", "" + message);
+                Toast.makeText(getContext(), "Server problem, check internet connection and restart",
+                        Toast.LENGTH_LONG).show();
+
+                // We return to the last fragment
+                assert getFragmentManager() != null;
+                if (getFragmentManager().getBackStackEntryCount() != 0) {
+                    getFragmentManager().popBackStack();
+                }
+            }
+        });
     }
 
     public static void hideKeyboard(Activity activity) {

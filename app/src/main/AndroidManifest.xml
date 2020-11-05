@@ -15,9 +15,10 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:targetApi="m">
+
         <activity
             android:name=".SplashActivity"
             android:label="@string/title_activity_splash"
@@ -37,6 +38,7 @@
             android:windowSoftInputMode="adjustPan">
 
         </activity>
+
         <activity
             android:name=".DetailActivity"
             android:label="@string/detail"
@@ -44,12 +46,12 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:screenOrientation="portrait"
                 android:value=".MainActivity" />
         </activity>
+
         <activity
             android:name=".HistoryDetailActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
 
     </application>
 

@@ -6,12 +6,12 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +21,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.barteksc.pdfviewer.PDFView;
 import com.hsbook.Utils.DownloadTask;
 import com.hsbook.adpater.TextDetailListAdapter;
 import com.hsbook.api.ApiUrl;
@@ -31,13 +30,11 @@ import com.hsbook.model.TextDetailModel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-//import com.hsbook.Utils.DownloadTask;
-
+@SuppressWarnings("FieldCanBeLocal")
 public class DetailActivity extends AppCompatActivity {
-    private String PDF_VIEWER = "PDF_VIEWER";
 
-    private ImageView imgBook;
     private RecyclerView textListView;
     private LinearLayoutManager linearLayoutManager;
     private WebView webView;
@@ -46,7 +43,7 @@ public class DetailActivity extends AppCompatActivity {
     private BookModel book;
     private Toolbar actionBar;
     private Button downloadBtn;
-    String url = "";
+    private String url = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +68,6 @@ public class DetailActivity extends AppCompatActivity {
                     if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         //File write logic here
                         final String bookTitle = MessageFormat.format("{0}-{1}", book.getTypeKh(), book.getTypeEn()) + ".pdf";
-                        Log.d("DownloadTask =", "" + url);
                         if (url.equals("")) {
                             Toast.makeText(getApplication(), "Something went wrong", Toast.LENGTH_SHORT).show();
                         } else {
@@ -91,11 +87,9 @@ public class DetailActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if (book != null) {
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    //Do something after 100ms
                     setUpDetailInfo(book);
                 }
             }, 500);
@@ -137,7 +131,7 @@ public class DetailActivity extends AppCompatActivity {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             mActionBarTitle.setText(R.string.detail);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_arrow_24dp);
         }
     }

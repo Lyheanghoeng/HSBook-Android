@@ -6,7 +6,6 @@ import android.os.Environment;
 import androidx.annotation.NonNull;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -30,7 +29,7 @@ public class MainActivity extends BaseActivity implements HomeFragment.OnFragmen
     private TextView mActionBarTitle;
     private Toolbar actionBar;
     private Fragment fragment;
-    public static ArrayList<String> histories = new ArrayList<String>();
+    public static ArrayList<String> histories = new ArrayList<>();
     public static List<BookModel> bookListMain = new ArrayList<>();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -69,6 +68,7 @@ public class MainActivity extends BaseActivity implements HomeFragment.OnFragmen
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         if (findViewById(R.id.frm_container) != null) {
+
             if (savedInstanceState != null) {
                 return;
             }
@@ -99,7 +99,6 @@ public class MainActivity extends BaseActivity implements HomeFragment.OnFragmen
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
@@ -125,8 +124,8 @@ public class MainActivity extends BaseActivity implements HomeFragment.OnFragmen
     public void getHistoryList(){
         histories = new ArrayList<>();
         File pdfFile = new File(Environment.getExternalStorageDirectory() + "/" + "HSBook Download");
-        if (pdfFile.exists()) //Checking for the file is exist or not
-        {
+        if (pdfFile.exists()) {
+            //Checking for the file is exist or not
             String path = Environment.getExternalStorageDirectory() + "/" + "HSBook Download";
             File directory = new File(path);
             File[] files = directory.listFiles();

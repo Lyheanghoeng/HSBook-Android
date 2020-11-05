@@ -43,9 +43,9 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
     public void onBindViewHolder(@NonNull final BookListAdapter.BookViewHolder holder, int position) {
         final BookModel book = bookList.get(position);
         String coverUrl = new ApiUrl().getCoverApi();
-        holder.bookTitle.setText(MessageFormat.format("{0}-{1}", book.getTypeKh(), book.getTypeEn()));
-        holder.bookAuthor.setText(book.getAuthor());
-        holder.bookLang.setText(book.getLang());
+//        holder.bookTitle.setText(MessageFormat.format("{0}-{1}", book.getTypeKh(), book.getTypeEn()));
+        holder.bookAuthor.setText("Author: " + book.getAuthor());
+        holder.bookTitle.setText("Title: " + book.getTypeKh());
 
         if (book.getCover() != null) {
             Glide.with(holder.bookImg)
@@ -72,7 +72,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
     class BookViewHolder extends RecyclerView.ViewHolder {
         ImageView bookImg;
         TextView bookTitle;
-        TextView bookLang;
         TextView bookAuthor;
 
         BookViewHolder(View itemView) {
@@ -80,7 +79,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.BookVi
 
             bookImg = itemView.findViewById(R.id.book_img);
             bookTitle = itemView.findViewById(R.id.book_title);
-            bookLang = itemView.findViewById(R.id.book_lang);
             bookAuthor = itemView.findViewById(R.id.book_author);
         }
     }

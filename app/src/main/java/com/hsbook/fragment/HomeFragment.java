@@ -4,10 +4,14 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,15 +48,8 @@ import java.util.Objects;
 import retrofit2.Call;
 import retrofit2.Response;
 
+@SuppressWarnings({"FieldCanBeLocal", "rawtypes"})
 public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
@@ -65,30 +62,13 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private RecyclerView.LayoutManager layoutManager;
     private List<BookModel> searchList = new ArrayList<>();
 
-    private OnFragmentInteractionListener mListener;
-
     public HomeFragment() {
         // Required empty public constructor
-    }
-
-    // Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
     }
 
     @Override
@@ -116,11 +96,10 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         if (MainActivity.bookListMain.size() < 1) {
             progressBar.setVisibility(View.VISIBLE);
             if (isConnected()) {
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        //Do something after 100ms
+                        // Your Code
                         getBookList();
                     }
                 }, 1000);
@@ -138,18 +117,12 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         });
     }
 
-    // Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+            // do nothing
+            Log.d("context", "context");
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -159,11 +132,10 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -189,11 +161,10 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     Log.i("onQueryTextSubmit", query);
 
                     if (isConnected()) {
-                        final Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                hideKeyboard(getActivity());
+                                hideKeyboard(Objects.requireNonNull(getActivity()));
                                 searchList.clear();
                                 bookAdapter = new BookListAdapter(searchList, getActivity());
                                 bookRecycleView.setAdapter(bookAdapter);
@@ -205,6 +176,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 getSearchBook(query);
                             }
                         }, 1000);
+
                     } else {
                         Toast.makeText(getContext(), "No Internet connection", Toast.LENGTH_LONG).show();
                     }
@@ -224,7 +196,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                    Log.d("CLOSE", "Collapse");
                     txtNotFound.setVisibility(View.INVISIBLE);
                     bookAdapter = new BookListAdapter(MainActivity.bookListMain, getActivity());
                     bookRecycleView.setAdapter(bookAdapter);
@@ -238,13 +209,11 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                // not implement event here
-                return false;
-            default:
-                break;
+        if (item.getItemId() == R.id.action_search) {
+            // not implement event here
+            return false;
         }
+
         searchView.setOnQueryTextListener(queryTextListener);
         return super.onOptionsItemSelected(item);
     }
@@ -261,15 +230,22 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public interface OnFragmentInteractionListener {
-        // Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     public boolean isConnected() {
-        ConnectivityManager connMgr = (ConnectivityManager) Objects.requireNonNull(getActivity()).getSystemService(Activity.CONNECTIVITY_SERVICE);
-        assert connMgr != null;
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
+        // check internet connection
+        ConnectivityManager connectivityManager = (ConnectivityManager) Objects.requireNonNull(getActivity()).getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // handle new version code
+            Network nw = connectivityManager.getActiveNetwork();
+            if (nw == null) return false;
+            NetworkCapabilities actNw = connectivityManager.getNetworkCapabilities(nw);
+            return actNw != null && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) || actNw.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH));
+        } else {
+            // handle old version code
+            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
+            return nwInfo != null && nwInfo.isConnected();
+        }
     }
 
     // query book list
@@ -281,6 +257,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             @Override
             public void onSuccess(retrofit2.Response<List<BookResponse>> data) {
                 progressBar.setVisibility(View.INVISIBLE);
+                assert data.body() != null;
                 for (int i = 0; i < data.body().size(); i++) {
                     BookModel tempBook = new BookModel();
                     BookResponse bookResponse = data.body().get(i);
